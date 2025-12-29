@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tool Mô Phỏng Ngẫu Nhiên</title>
+    <style>
+        /* Phần CSS - Trang trí giao diện */
+        body {
+            background-color: #0f172a; /* Màu nền tối */
+            color: white;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            text-align: center;
+            background: #1e293b;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 0 20px #3b82f6; /* Hiệu ứng phát sáng xanh */
+            width: 300px;
+        }
+        h1 { color: #38bdf8; }
+        .result-box {
+            font-size: 24px;
+            margin: 20px 0;
+            min-height: 40px;
+            font-weight: bold;
+            color: #fbbf24; /* Màu vàng */
+        }
+        button {
+            background: linear-gradient(45deg, #2563eb, #06b6d4);
+            border: none;
+            padding: 15px 30px;
+            color: white;
+            font-size: 18px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.5);
+        }
+        button:hover { transform: scale(1.05); }
+        button:disabled { background: #64748b; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>🎲 AI DỰ ĐOÁN 🎲</h1>
+        <p>Hệ thống mô phỏng ngẫu nhiên</p>
+        
+        <div id="result" class="result-box">Sẵn sàng...</div>
+
+        <button id="btnClick" onclick="batDauDuDoan()">PHÂN TÍCH NGAY</button>
+    </div>
+
+    <script>
+        /* Phần JavaScript - Xử lý logic */
+        function batDauDuDoan() {
+            const manHinhHienThi = document.getElementById('result');
+            const nutBam = document.getElementById('btnClick');
+
+            // 1. Khóa nút bấm để tránh spam
+            nutBam.disabled = true;
+            nutBam.innerText = "Đang kết nối...";
+
+            // 2. Tạo hiệu ứng "giả vờ" đang tính toán (để giống tool thật)
+            let count = 0;
+            let loading = setInterval(() => {
+                manHinhHienThi.innerText = "Đang phân tích dữ liệu... " + (count++) + "%";
+                if(count > 5) clearInterval(loading); // Chạy nháy vài cái cho đẹp
+            }, 300);
+
+            // 3. Sau 2 giây thì hiện kết quả
+            setTimeout(() => {
+                clearInterval(loading); // Dừng hiệu ứng loading
+                
+                // --- ĐÂY LÀ PHẦN QUAN TRỌNG NHẤT: LOGIC NGẪU NHIÊN ---
+                // Math.random() tạo số từ 0 đến 1. 
+                // Nếu < 0.5 thì ra Tài, > 0.5 thì ra Xỉu.
+                // Đây chính là cách các tool lừa đảo hoạt động: hoàn toàn là Random.
+                
+                const soNgauNhien = Math.random(); 
+                let ketQua = "";
+                
+                if (soNgauNhien < 0.5) {
+                    ketQua = "KẾT QUẢ: XỈU (Ngẫu nhiên)";
+                    manHinhHienThi.style.color = "#34d399"; // Màu xanh
+                } else {
+                    ketQua = "KẾT QUẢ: TÀI (Ngẫu nhiên)";
+                    manHinhHienThi.style.color = "#f87171"; // Màu đỏ
+                }
+
+                // Hiện kết quả ra màn hình
+                manHinhHienThi.innerText = ketQua;
+
+                // Mở lại nút bấm
+                nutBam.disabled = false;
+                nutBam.innerText = "PHÂN TÍCH LẠI";
+                
+            }, 2000); // 2000ms = 2 giây
+        }
+    </script>
+</body>
+</html>
