@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tool Mô Phỏng Ngẫu Nhiên</title>
+    <title>Tool Tai Xiu + Nhập Mã</title>
     <style>
-        /* Phần CSS - Trang trí giao diện */
+        /* CSS: Trang trí giao diện */
         body {
-            background-color: #0f172a; /* Màu nền tối */
+            background-color: #0f172a;
             color: white;
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -21,89 +21,111 @@
             background: #1e293b;
             padding: 40px;
             border-radius: 20px;
-            box-shadow: 0 0 20px #3b82f6; /* Hiệu ứng phát sáng xanh */
-            width: 300px;
+            box-shadow: 0 0 25px #8b5cf6; /* Đổi sang màu tím cho "huyền bí" */
+            width: 320px;
         }
-        h1 { color: #38bdf8; }
+        h1 { color: #c084fc; margin-bottom: 5px; }
+        p { color: #94a3b8; font-size: 14px; margin-bottom: 25px; }
+        
+        /* Trang trí ô nhập liệu */
+        input {
+            width: 80%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            border: 2px solid #475569;
+            background-color: #0f172a;
+            color: #fff;
+            font-size: 16px;
+            text-align: center;
+            outline: none;
+            transition: 0.3s;
+        }
+        input:focus {
+            border-color: #8b5cf6;
+            box-shadow: 0 0 10px rgba(139, 92, 246, 0.3);
+        }
+
         .result-box {
-            font-size: 24px;
+            font-size: 22px;
             margin: 20px 0;
-            min-height: 40px;
+            min-height: 50px;
             font-weight: bold;
-            color: #fbbf24; /* Màu vàng */
+            color: #fbbf24;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
+        
         button {
-            background: linear-gradient(45deg, #2563eb, #06b6d4);
+            background: linear-gradient(45deg, #7c3aed, #db2777);
             border: none;
             padding: 15px 30px;
             color: white;
-            font-size: 18px;
+            font-size: 16px;
+            font-weight: bold;
             border-radius: 50px;
             cursor: pointer;
             transition: 0.3s;
-            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.5);
+            width: 100%;
         }
-        button:hover { transform: scale(1.05); }
-        button:disabled { background: #64748b; cursor: not-allowed; }
+        button:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(219, 39, 119, 0.4); }
+        button:disabled { background: #475569; cursor: not-allowed; transform: none; box-shadow: none; }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h1>🎲 AI DỰ ĐOÁN 🎲</h1>
-        <p>Hệ thống mô phỏng ngẫu nhiên</p>
+        <h1>🔮 AI PREDICTOR v2.0</h1>
+        <p>Nhập mã phiên để hệ thống phân tích</p>
         
-        <div id="result" class="result-box">Sẵn sàng...</div>
+        <input type="text" id="maPhienInput" placeholder="Nhập mã phiên (VD: #12938)...">
+
+        <div id="result" class="result-box">Đang chờ dữ liệu...</div>
 
         <button id="btnClick" onclick="batDauDuDoan()">PHÂN TÍCH NGAY</button>
     </div>
 
     <script>
-        /* Phần JavaScript - Xử lý logic */
         function batDauDuDoan() {
-            const manHinhHienThi = document.getElementById('result');
+            // 1. Lấy các phần tử từ HTML
+            const inputField = document.getElementById('maPhienInput');
+            const manHinh = document.getElementById('result');
             const nutBam = document.getElementById('btnClick');
+            
+            // Lấy giá trị người dùng vừa nhập
+            const maPhien = inputField.value.trim();
 
-            // 1. Khóa nút bấm để tránh spam
+            // 2. Kiểm tra xem người dùng đã nhập chưa
+            if (maPhien === "") {
+                alert("⚠️ Cảnh báo: Bạn chưa nhập mã phiên!");
+                inputField.focus(); // Đưa con trỏ chuột về ô nhập
+                return; // Dừng lại, không chạy tiếp
+            }
+
+            // 3. Khóa nút và ô nhập
             nutBam.disabled = true;
-            nutBam.innerText = "Đang kết nối...";
+            inputField.disabled = true;
+            nutBam.innerText = "ĐANG KẾT NỐI SERVER...";
 
-            // 2. Tạo hiệu ứng "giả vờ" đang tính toán (để giống tool thật)
+            // 4. Hiệu ứng "Giả vờ" phân tích mã phiên
             let count = 0;
+            manHinh.style.color = "#fbbf24"; // Màu vàng mặc định
+            
             let loading = setInterval(() => {
-                manHinhHienThi.innerText = "Đang phân tích dữ liệu... " + (count++) + "%";
-                if(count > 5) clearInterval(loading); // Chạy nháy vài cái cho đẹp
-            }, 300);
+                // Hiển thị mã phiên trong lúc chạy loading để lừa mắt
+                manHinh.innerText = `Đang giải mã ${maPhien} [${count}%]`;
+                count += Math.floor(Math.random() * 20); // Tăng % ngẫu nhiên
+                if(count > 100) count = 99;
+            }, 200);
 
-            // 3. Sau 2 giây thì hiện kết quả
+            // 5. Sau 2.5 giây thì trả kết quả
             setTimeout(() => {
-                clearInterval(loading); // Dừng hiệu ứng loading
+                clearInterval(loading);
                 
-                // --- ĐÂY LÀ PHẦN QUAN TRỌNG NHẤT: LOGIC NGẪU NHIÊN ---
-                // Math.random() tạo số từ 0 đến 1. 
-                // Nếu < 0.5 thì ra Tài, > 0.5 thì ra Xỉu.
-                // Đây chính là cách các tool lừa đảo hoạt động: hoàn toàn là Random.
-                
+                // --- LOGIC NGẪU NHIÊN (Vẫn là Random 50/50) ---
+                // Dù bạn nhập số nào, kết quả vẫn là ngẫu nhiên
                 const soNgauNhien = Math.random(); 
-                let ketQua = "";
                 
                 if (soNgauNhien < 0.5) {
-                    ketQua = "KẾT QUẢ: XỈU (Ngẫu nhiên)";
-                    manHinhHienThi.style.color = "#34d399"; // Màu xanh
-                } else {
-                    ketQua = "KẾT QUẢ: TÀI (Ngẫu nhiên)";
-                    manHinhHienThi.style.color = "#f87171"; // Màu đỏ
-                }
-
-                // Hiện kết quả ra màn hình
-                manHinhHienThi.innerText = ketQua;
-
-                // Mở lại nút bấm
-                nutBam.disabled = false;
-                nutBam.innerText = "PHÂN TÍCH LẠI";
-                
-            }, 2000); // 2000ms = 2 giây
-        }
-    </script>
-</body>
-</html>
+                    manHinh.innerText = "
